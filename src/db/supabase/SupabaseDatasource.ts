@@ -14,6 +14,33 @@ export class SupabaseDatasource implements Datasource {
     return data as Sesion;
   }
 
+  async eliminarSesion(sesionId: string): Promise<void> {
+    await getSupabase().from('sesiones').delete().eq('id', sesionId);
+  }
+
+  async clonarSesion(sesionId: string, nuevoNombre: string): Promise<Sesion> {
+    const codigo = nuevoNombre.toUpperCase().replace(/\s+/g, '').slice(0, 8) + Math.floor(Math.random() * 100);
+    const { data: nueva, error } = await getSupabase()
+      .from('sesiones')
+      .insert({ nombre_evento: nuevoNombre, codigo_acceso: codigo, estado: 'espera', pausada: false })
+      .select()
+      .single();
+    if (error) throw error;
+    const { data: preguntas } = await getSupabase()
+      .from('preguntas').select('*').eq('sesion_id', sesionId).order('orden');
+    if (preguntas?.length) {
+      const copias = preguntas.map(({ enunciado, opcion_a, opcion_b, orden, peso }: { enunciado: string; opcion_a: string; opcion_b: string; orden: number; peso: number }) =>
+        ({ enunciado, opcion_a, opcion_b, orden, peso, sesion_id: nueva.id })
+      );
+      const { data: insertadas } = await getSupabase().from('preguntas').insert(copias).select().order('orden');
+      if (insertadas?.length) {
+        await getSupabase().from('sesiones').update({ pregunta_actual_id: insertadas[0].id }).eq('id', nueva.id);
+        return { ...nueva, pregunta_actual_id: insertadas[0].id } as Sesion;
+      }
+    }
+    return nueva as Sesion;
+  }
+
   async getSesionPorCodigo(codigo: string): Promise<Sesion | null> {
     const { data } = await getSupabase().from('sesiones').select('*').eq('codigo_acceso', codigo.toUpperCase()).single();
     return data as Sesion | null;

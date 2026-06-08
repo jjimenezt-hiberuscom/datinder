@@ -35,6 +35,33 @@ export class MockDatasource implements Datasource {
     return s;
   }
 
+  async eliminarSesion(sesionId: string): Promise<void> {
+    const uIds = new Set(usuarios.filter(u => u.sesion_id === sesionId).map(u => u.id));
+    respuestas = respuestas.filter(r => !uIds.has(r.usuario_id));
+    usuarios = usuarios.filter(u => u.sesion_id !== sesionId);
+    preguntas = preguntas.filter(p => p.sesion_id !== sesionId);
+    sesiones = sesiones.filter(s => s.id !== sesionId);
+  }
+
+  async clonarSesion(sesionId: string, nuevoNombre: string): Promise<Sesion> {
+    const codigo = nuevoNombre.toUpperCase().replace(/\s+/g, '').slice(0, 8) + Math.floor(Math.random() * 100);
+    const nueva: Sesion = {
+      id: generarId(),
+      nombre_evento: nuevoNombre,
+      codigo_acceso: codigo,
+      estado: 'espera',
+      pregunta_actual_id: null,
+      pausada: false,
+      created_at: new Date().toISOString(),
+    };
+    const origen = preguntas.filter(p => p.sesion_id === sesionId).sort((a, b) => a.orden - b.orden);
+    const copias: Pregunta[] = origen.map(p => ({ ...p, id: generarId(), sesion_id: nueva.id }));
+    if (copias.length) nueva.pregunta_actual_id = copias[0].id;
+    sesiones.push(nueva);
+    preguntas.push(...copias);
+    return nueva;
+  }
+
   async getSesionPorCodigo(codigo: string): Promise<Sesion | null> {
     return sesiones.find(s => s.codigo_acceso === codigo.toUpperCase()) ?? null;
   }

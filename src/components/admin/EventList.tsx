@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Copy, ExternalLink } from 'lucide-react';
+import { Plus, Copy, ExternalLink, Trash2, CopyPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +30,23 @@ export function EventList() {
 
   function copiar(text: string) {
     navigator.clipboard.writeText(text).catch(() => {});
+  }
+
+  async function clonarEvento(s: Sesion) {
+    const nuevoNombre = prompt('Nombre del nuevo evento:', `${s.nombre_evento} — Copia`);
+    if (!nuevoNombre?.trim()) return;
+    setLoading(true);
+    await db.clonarSesion(s.id, nuevoNombre.trim());
+    await cargar();
+    setLoading(false);
+  }
+
+  async function eliminarEvento(s: Sesion) {
+    if (!confirm(`¿Eliminar "${s.nombre_evento}"? Se borrarán todas sus preguntas, participantes y respuestas.`)) return;
+    setLoading(true);
+    await db.eliminarSesion(s.id);
+    await cargar();
+    setLoading(false);
   }
 
   const estadoColor: Record<string, 'default' | 'yellow' | 'destructive'> = {
@@ -71,7 +88,7 @@ export function EventList() {
                   Código: <span className="font-mono font-bold">{s.codigo_acceso}</span>
                 </p>
               </div>
-              <div className="flex gap-2 flex-shrink-0">
+              <div className="flex gap-2 flex-shrink-0 flex-wrap">
                 <Button variant="outline" size="sm" onClick={() => copiar(s.codigo_acceso)}>
                   <Copy className="w-3 h-3 mr-1" /> Código
                 </Button>
@@ -82,6 +99,13 @@ export function EventList() {
                   <a href={`/board/${s.codigo_acceso}?rol=presentador`} target="_blank" rel="noreferrer">
                     <ExternalLink className="w-3 h-3 mr-1" /> Abrir
                   </a>
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => void clonarEvento(s)} disabled={loading}>
+                  <CopyPlus className="w-3 h-3 mr-1" /> Clonar
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => void eliminarEvento(s)} disabled={loading}
+                  className="text-destructive border-destructive/30 hover:bg-destructive/10">
+                  <Trash2 className="w-3 h-3 mr-1" /> Eliminar
                 </Button>
               </div>
             </div>

@@ -20,6 +20,8 @@ export interface DatosPregunta {
 export interface Datasource {
   // sesiones
   crearSesion(nombre: string): Promise<Sesion>;
+  eliminarSesion(sesionId: string): Promise<void>;
+  clonarSesion(sesionId: string, nuevoNombre: string): Promise<Sesion>;
   getSesionPorCodigo(codigo: string): Promise<Sesion | null>;
   getSesionById(id: string): Promise<Sesion | null>;
   setEstado(sesionId: string, estado: EstadoSesion): Promise<void>;
