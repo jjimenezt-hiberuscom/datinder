@@ -1,22 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, ArrowRight, Loader2, Link2, Camera } from 'lucide-react';
+import { ArrowRight, Loader2, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useSession } from '@/context/SessionContext';
 import { db } from '@/db';
 import { uploadFoto } from '@/lib/storage';
-
-// Perfiles LinkedIn simulados
-const LINKEDIN_PROFILES = [
-  { nombre: 'María', apellidos: 'González Ruiz', empresa: 'Google Spain', cargo: 'Senior PM', foto_url: 'https://i.pravatar.cc/150?img=47' },
-  { nombre: 'Alejandro', apellidos: 'Pérez Muñoz', empresa: 'Santander Tech', cargo: 'Tech Lead', foto_url: 'https://i.pravatar.cc/150?img=52' },
-  { nombre: 'Patricia', apellidos: 'López Vidal', empresa: 'Accenture', cargo: 'Consultant', foto_url: 'https://i.pravatar.cc/150?img=44' },
-  { nombre: 'Sergio', apellidos: 'Morales Cano', empresa: 'Indra', cargo: 'DevOps', foto_url: 'https://i.pravatar.cc/150?img=57' },
-];
 
 export function Login() {
   const navigate = useNavigate();
@@ -25,7 +16,7 @@ export function Login() {
   const [error, setError] = useState('');
 
   // Formulario invitado
-  const [form, setForm] = useState({ nombre: '', apellidos: '', empresa: '', cargo: '' });
+  const [form, setForm] = useState({ nombre: '', apellidos: '' });
   const [fotoFile, setFotoFile] = useState<File | null>(null);
   const [fotoPreview, setFotoPreview] = useState<string | null>(null);
   const fotoInputRef = useRef<HTMLInputElement>(null);
@@ -37,17 +28,7 @@ export function Login() {
 
   // Step: 'login' | 'codigo'
   const [step, setStep] = useState<'login' | 'codigo'>('login');
-  const [pendingUser, setPendingUser] = useState<typeof LINKEDIN_PROFILES[0] | null>(null);
-
-  async function handleLinkedIn() {
-    setLoading(true);
-    // Simular OAuth delay
-    await new Promise(r => setTimeout(r, 1200));
-    const profile = LINKEDIN_PROFILES[Math.floor(Math.random() * LINKEDIN_PROFILES.length)];
-    setPendingUser(profile);
-    setStep('codigo');
-    setLoading(false);
-  }
+  const [pendingUser, setPendingUser] = useState<{ nombre: string; apellidos: string; foto_url: string } | null>(null);
 
   function handleFotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -81,7 +62,7 @@ export function Login() {
       const usuario = await db.unirse(sesion.id, {
         ...pendingUser!,
         foto_url: foto_url || undefined,
-        tipo: pendingUser?.empresa ? 'linkedin' : 'invitado',
+        tipo: 'invitado',
       });
       setUsuario(usuario);
       setSesion(sesion);
@@ -103,118 +84,70 @@ export function Login() {
         </div>
 
         {step === 'login' ? (
-          <Tabs defaultValue="linkedin" className="w-full">
-            <TabsList className="w-full bg-white/10 text-white/60">
-              <TabsTrigger value="linkedin" className="flex-1 data-[state=active]:bg-white data-[state=active]:text-datinder-bg">
-                <Link2 className="w-4 h-4 mr-2" /> LinkedIn
-              </TabsTrigger>
-              <TabsTrigger value="invitado" className="flex-1 data-[state=active]:bg-white data-[state=active]:text-datinder-bg">
-                <User className="w-4 h-4 mr-2" /> Invitado
-              </TabsTrigger>
-            </TabsList>
+          <Card className="bg-white/5 border-white/10">
+            <CardContent className="pt-6">
+              <form onSubmit={handleGuestSubmit} className="space-y-3">
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <Label className="text-white/70 text-xs">Nombre *</Label>
+                    <Input
+                      placeholder="Ana"
+                      value={form.nombre}
+                      onChange={e => setForm(f => ({ ...f, nombre: e.target.value }))}
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/30 mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-white/70 text-xs">Apellidos *</Label>
+                    <Input
+                      placeholder="García"
+                      value={form.apellidos}
+                      onChange={e => setForm(f => ({ ...f, apellidos: e.target.value }))}
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/30 mt-1"
+                    />
+                  </div>
+                </div>
 
-            <TabsContent value="linkedin">
-              <Card className="bg-white/5 border-white/10">
-                <CardContent className="pt-6 space-y-4">
-                  <p className="text-white/70 text-sm text-center">Accede con tu perfil de LinkedIn para importar tus datos profesionales automáticamente.</p>
+                {/* Foto selfie */}
+                <div className="flex items-center gap-3 py-1">
+                  <input
+                    ref={fotoInputRef}
+                    type="file"
+                    accept="image/*"
+                    capture="user"
+                    className="hidden"
+                    onChange={handleFotoChange}
+                  />
+                  {fotoPreview ? (
+                    <img
+                      src={fotoPreview}
+                      alt="Tu foto"
+                      className="w-12 h-12 rounded-full object-cover border-2 border-datinder-yellow flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
+                      <Camera className="w-5 h-5 text-white/30" />
+                    </div>
+                  )}
                   <Button
-                    variant="yellow"
-                    className="w-full gap-2"
-                    onClick={handleLinkedIn}
-                    disabled={loading}
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="text-white/60 border border-white/20 hover:bg-white/10 hover:text-white text-xs gap-1"
+                    onClick={() => fotoInputRef.current?.click()}
                   >
-                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Link2 className="w-4 h-4" />}
-                    Continuar con LinkedIn
+                    <Camera className="w-3 h-3" />
+                    {fotoPreview ? 'Cambiar foto' : 'Hazte una foto'}
                   </Button>
-                  <p className="text-white/30 text-xs text-center">* Simulación OAuth para demo</p>
-                </CardContent>
-              </Card>
-            </TabsContent>
+                </div>
 
-            <TabsContent value="invitado">
-              <Card className="bg-white/5 border-white/10">
-                <CardContent className="pt-6">
-                  <form onSubmit={handleGuestSubmit} className="space-y-3">
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <Label className="text-white/70 text-xs">Nombre *</Label>
-                        <Input
-                          placeholder="Ana"
-                          value={form.nombre}
-                          onChange={e => setForm(f => ({ ...f, nombre: e.target.value }))}
-                          className="bg-white/10 border-white/20 text-white placeholder:text-white/30 mt-1"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-white/70 text-xs">Apellidos *</Label>
-                        <Input
-                          placeholder="García"
-                          value={form.apellidos}
-                          onChange={e => setForm(f => ({ ...f, apellidos: e.target.value }))}
-                          className="bg-white/10 border-white/20 text-white placeholder:text-white/30 mt-1"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label className="text-white/70 text-xs">Empresa (opcional)</Label>
-                      <Input
-                        placeholder="Acme Inc."
-                        value={form.empresa}
-                        onChange={e => setForm(f => ({ ...f, empresa: e.target.value }))}
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/30 mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label className="text-white/70 text-xs">Cargo (opcional)</Label>
-                      <Input
-                        placeholder="Product Manager"
-                        value={form.cargo}
-                        onChange={e => setForm(f => ({ ...f, cargo: e.target.value }))}
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/30 mt-1"
-                      />
-                    </div>
-                    {/* Foto selfie */}
-                    <div className="flex items-center gap-3 py-1">
-                      <input
-                        ref={fotoInputRef}
-                        type="file"
-                        accept="image/*"
-                        capture="user"
-                        className="hidden"
-                        onChange={handleFotoChange}
-                      />
-                      {fotoPreview ? (
-                        <img
-                          src={fotoPreview}
-                          alt="Tu foto"
-                          className="w-12 h-12 rounded-full object-cover border-2 border-datinder-yellow flex-shrink-0"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
-                          <Camera className="w-5 h-5 text-white/30" />
-                        </div>
-                      )}
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="text-white/60 border border-white/20 hover:bg-white/10 hover:text-white text-xs gap-1"
-                        onClick={() => fotoInputRef.current?.click()}
-                      >
-                        <Camera className="w-3 h-3" />
-                        {fotoPreview ? 'Cambiar foto' : 'Hazte una foto'}
-                      </Button>
-                    </div>
-
-                    {error && <p className="text-red-400 text-xs">{error}</p>}
-                    <Button type="submit" variant="yellow" className="w-full gap-2">
-                      Continuar <ArrowRight className="w-4 h-4" />
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+                {error && <p className="text-red-400 text-xs">{error}</p>}
+                <Button type="submit" variant="yellow" className="w-full gap-2">
+                  Continuar <ArrowRight className="w-4 h-4" />
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
         ) : (
           <Card className="bg-white/5 border-white/10">
             <CardHeader>
@@ -229,7 +162,6 @@ export function Login() {
                     />
                     <div>
                       <p className="text-white font-bold">{pendingUser.nombre} {pendingUser.apellidos}</p>
-                      {pendingUser.empresa && <p className="text-white/50 text-sm font-normal">{pendingUser.cargo} · {pendingUser.empresa}</p>}
                     </div>
                   </div>
                 )}
