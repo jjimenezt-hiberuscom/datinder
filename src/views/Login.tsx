@@ -11,9 +11,16 @@ import { uploadFoto } from '@/lib/storage';
 
 export function Login() {
   const navigate = useNavigate();
-  const { setUsuario, setSesion } = useSession();
+  const { usuario, sesion, setUsuario, setSesion } = useSession();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Si ya hay sesión activa (localStorage), redirigir sin pasar por el login
+  React.useEffect(() => {
+    if (usuario && sesion) {
+      navigate(sesion.estado === 'espera' ? '/lobby' : '/play', { replace: true });
+    }
+  }, [usuario, sesion, navigate]);
 
   // Formulario invitado
   const [form, setForm] = useState({ nombre: '', apellidos: '' });
