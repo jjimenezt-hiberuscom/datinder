@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, ArrowRight, Loader2, Link2 } from 'lucide-react';
+import { User, ArrowRight, Loader2, Link2, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useSession } from '@/context/SessionContext';
 import { db } from '@/db';
+import { uploadFoto } from '@/lib/storage';
 
 // Perfiles LinkedIn simulados
 const LINKEDIN_PROFILES = [
@@ -25,6 +26,9 @@ export function Login() {
 
   // Formulario invitado
   const [form, setForm] = useState({ nombre: '', apellidos: '', empresa: '', cargo: '' });
+  const [fotoFile, setFotoFile] = useState<File | null>(null);
+  const [fotoPreview, setFotoPreview] = useState<string | null>(null);
+  const fotoInputRef = useRef<HTMLInputElement>(null);
   // Código de sesión
   const [codigo, setCodigo] = useState(() => {
     const params = new URLSearchParams(window.location.search);
@@ -45,10 +49,17 @@ export function Login() {
     setLoading(false);
   }
 
+  function handleFotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setFotoFile(file);
+    setFotoPreview(URL.createObjectURL(file));
+  }
+
   function handleGuestSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.nombre.trim() || !form.apellidos.trim()) { setError('Nombre y apellidos son obligatorios'); return; }
-    setPendingUser({ ...form, foto_url: `https://i.pravatar.cc/150?u=${form.nombre}${form.apellidos}` });
+    setPendingUser({ ...form, foto_url: fotoPreview ?? '' });
     setStep('codigo');
     setError('');
   }
@@ -61,8 +72,15 @@ export function Login() {
     try {
       const sesion = await db.getSesionPorCodigo(codigo.trim());
       if (!sesion) { setError('Código no encontrado. Comprueba que el evento esté activo.'); setLoading(false); return; }
+      let foto_url = pendingUser?.foto_url ?? '';
+      if (fotoFile && pendingUser) {
+        try {
+          foto_url = await uploadFoto(fotoFile, `${pendingUser.nombre}-${pendingUser.apellidos}`);
+        } catch { /* foto opcional, continuar sin ella */ }
+      }
       const usuario = await db.unirse(sesion.id, {
         ...pendingUser!,
+        foto_url: foto_url || undefined,
         tipo: pendingUser?.empresa ? 'linkedin' : 'invitado',
       });
       setUsuario(usuario);
@@ -155,6 +173,39 @@ export function Login() {
                         className="bg-white/10 border-white/20 text-white placeholder:text-white/30 mt-1"
                       />
                     </div>
+                    {/* Foto selfie */}
+                    <div className="flex items-center gap-3 py-1">
+                      <input
+                        ref={fotoInputRef}
+                        type="file"
+                        accept="image/*"
+                        capture="user"
+                        className="hidden"
+                        onChange={handleFotoChange}
+                      />
+                      {fotoPreview ? (
+                        <img
+                          src={fotoPreview}
+                          alt="Tu foto"
+                          className="w-12 h-12 rounded-full object-cover border-2 border-datinder-yellow flex-shrink-0"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
+                          <Camera className="w-5 h-5 text-white/30" />
+                        </div>
+                      )}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="text-white/60 border border-white/20 hover:bg-white/10 hover:text-white text-xs gap-1"
+                        onClick={() => fotoInputRef.current?.click()}
+                      >
+                        <Camera className="w-3 h-3" />
+                        {fotoPreview ? 'Cambiar foto' : 'Hazte una foto'}
+                      </Button>
+                    </div>
+
                     {error && <p className="text-red-400 text-xs">{error}</p>}
                     <Button type="submit" variant="yellow" className="w-full gap-2">
                       Continuar <ArrowRight className="w-4 h-4" />

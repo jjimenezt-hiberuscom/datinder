@@ -54,7 +54,18 @@ create table if not exists respuestas (
   unique (usuario_id, pregunta_id)
 );
 
--- 5. Habilitar Realtime
+-- 5. Bucket de fotos (Supabase Storage)
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('fotos', 'fotos', true, 5242880, '{image/jpeg,image/png,image/webp}')
+on conflict (id) do nothing;
+
+create policy "Public read fotos" on storage.objects
+  for select using (bucket_id = 'fotos');
+
+create policy "Public upload fotos" on storage.objects
+  for insert with check (bucket_id = 'fotos');
+
+-- 6. Habilitar Realtime
 alter publication supabase_realtime add table sesiones;
 alter publication supabase_realtime add table usuarios;
 alter publication supabase_realtime add table respuestas;
