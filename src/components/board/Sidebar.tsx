@@ -1,4 +1,5 @@
 import { Users, Pause, RotateCcw, ChevronRight } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 import { Button } from '@/components/ui/button';
 import { MatchesList } from './MatchesList';
 import type { Match, Sesion, Pregunta } from '@/types';
@@ -43,16 +44,9 @@ export function Sidebar({ sesion, usuarios, matches, preguntas, preguntaActual, 
     <aside className="flex flex-col gap-4 h-full">
       {/* QR + Participantes */}
       <div className="bg-white rounded-2xl p-5 flex flex-col items-center gap-3">
-        {/* QR placeholder */}
-        <div className="w-28 h-28 bg-datinder-bg rounded-xl flex items-center justify-center relative overflow-hidden">
-          <div className="grid grid-cols-7 grid-rows-7 gap-0.5 p-2 w-full h-full">
-            {Array.from({ length: 49 }).map((_, i) => (
-              <div key={i} className={`rounded-sm ${Math.random() > 0.4 ? 'bg-white' : 'bg-transparent'}`} />
-            ))}
-          </div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-white font-black text-xs bg-datinder-bg px-1">{sesion.codigo_acceso}</span>
-          </div>
+        {/* QR real */}
+        <div className="w-28 h-28 bg-white rounded-xl flex items-center justify-center p-2">
+          <QRCodeSVG value={loginUrl} size={96} bgColor="#ffffff" fgColor="#0f172a" />
         </div>
         <p className="text-datinder-bg text-xs text-center font-medium truncate w-full">{loginUrl}</p>
 
