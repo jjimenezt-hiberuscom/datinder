@@ -4,6 +4,7 @@ import { MatchesList } from './MatchesList';
 import type { Match, Sesion, Pregunta } from '@/types';
 import { db } from '@/db';
 import { getLoginUrl } from '@/config';
+import { avanzarPregunta } from '@/lib/sesion';
 
 interface SidebarProps {
   sesion: Sesion;
@@ -20,13 +21,7 @@ export function Sidebar({ sesion, usuarios, matches, preguntas, preguntaActual, 
   const pregActualOrden = preguntaActual?.orden ?? 0;
 
   async function handleSiguiente() {
-    const sorted = [...preguntas].sort((a, b) => a.orden - b.orden);
-    const idx = sorted.findIndex(p => p.id === preguntaActual?.id);
-    if (idx < sorted.length - 1) {
-      await db.setPreguntaActual(sesion.id, sorted[idx + 1].id);
-    } else {
-      await db.setEstado(sesion.id, 'finalizado');
-    }
+    await avanzarPregunta(sesion, preguntas, preguntaActual);
     onReload();
   }
 
@@ -92,6 +87,19 @@ export function Sidebar({ sesion, usuarios, matches, preguntas, preguntaActual, 
       {isPresenter && (
         <div className="bg-white/5 rounded-2xl p-4 border border-white/10 space-y-2">
           <p className="text-white/40 text-xs uppercase tracking-widest mb-3">Controles</p>
+          <div className="flex items-center justify-between px-1 mb-1">
+            <span className="text-white/50 text-xs">Auto-avance</span>
+            <button
+              onClick={() => { void db.setPausada(sesion.id, !sesion.pausada).then(onReload); }}
+              className={`text-xs font-bold px-3 py-1 rounded-full border transition-colors ${
+                sesion.pausada
+                  ? 'bg-white/5 border-white/20 text-white/40'
+                  : 'bg-datinder-yellow/20 border-datinder-yellow/40 text-datinder-yellow'
+              }`}
+            >
+              {sesion.pausada ? 'OFF' : 'ON'}
+            </button>
+          </div>
           <Button
             variant="yellow"
             className="w-full gap-2"
@@ -102,11 +110,11 @@ export function Sidebar({ sesion, usuarios, matches, preguntas, preguntaActual, 
             Siguiente Pregunta
           </Button>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="flex-1 gap-1 border-white/20 text-white hover:bg-white/10" onClick={handlePausar}>
+            <Button variant="ghost" size="sm" className="flex-1 gap-1 bg-white/10 border border-white/20 text-white hover:bg-white/20" onClick={handlePausar}>
               <Pause className="w-3 h-3" />
               {sesion.estado === 'espera' ? 'Reanudar' : 'Pausar'}
             </Button>
-            <Button variant="outline" size="sm" className="flex-1 gap-1 border-white/20 text-white hover:bg-white/10" onClick={handleReiniciar}>
+            <Button variant="ghost" size="sm" className="flex-1 gap-1 bg-red-500/10 border border-red-400/30 text-red-300 hover:bg-red-500/20" onClick={handleReiniciar}>
               <RotateCcw className="w-3 h-3" />
               Reiniciar
             </Button>

@@ -47,7 +47,7 @@ export function Login() {
 
   function handleGuestSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.nombre.trim()) { setError('El nombre es obligatorio'); return; }
+    if (!form.nombre.trim() || !form.apellidos.trim()) { setError('Nombre y apellidos son obligatorios'); return; }
     setPendingUser({ ...form, foto_url: `https://i.pravatar.cc/150?u=${form.nombre}${form.apellidos}` });
     setStep('codigo');
     setError('');

@@ -13,6 +13,7 @@ create table if not exists sesiones (
   estado text not null default 'espera',
   -- 'espera' | 'jugando' | 'finalizado'
   pregunta_actual_id uuid,
+  pausada boolean default false,
   created_at timestamptz default now()
 );
 

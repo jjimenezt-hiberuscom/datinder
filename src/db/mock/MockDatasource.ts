@@ -23,6 +23,7 @@ export class MockDatasource implements Datasource {
       codigo_acceso: codigo,
       estado: 'espera',
       pregunta_actual_id: null,
+      pausada: false,
       created_at: new Date().toISOString(),
     };
     sesiones.push(s);
@@ -50,6 +51,11 @@ export class MockDatasource implements Datasource {
   async setPreguntaActual(sesionId: string, preguntaId: string | null): Promise<void> {
     const s = sesiones.find(s => s.id === sesionId);
     if (s) { s.pregunta_actual_id = preguntaId; notificar(sesionId); }
+  }
+
+  async setPausada(sesionId: string, pausada: boolean): Promise<void> {
+    const s = sesiones.find(s => s.id === sesionId);
+    if (s) { s.pausada = pausada; notificar(sesionId); }
   }
 
   async listarSesiones(): Promise<Sesion[]> {

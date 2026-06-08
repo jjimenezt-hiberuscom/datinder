@@ -5,6 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Confetti } from './Confetti';
 import type { Match } from '@/types';
 import { exportarRankingCSV } from '@/lib/exportCsv';
+import { nombreCompleto } from '@/lib/utils';
 
 interface PodiumProps {
   matches: Match[];
@@ -40,7 +41,7 @@ function PodiumSlot({ match, pos, delay }: { match: Match; pos: 1 | 2 | 3; delay
         />
       </div>
       <div className="text-center">
-        <p className="text-white font-bold text-sm">{match.a.nombre} <span className="text-datinder-yellow">+</span> {match.b.nombre}</p>
+        <p className="text-white font-bold text-sm">{nombreCompleto(match.a)} <span className="text-datinder-yellow">+</span> {nombreCompleto(match.b)}</p>
         <p className="text-datinder-yellow font-black text-xl">{Math.round(match.afinidad)}%</p>
       </div>
       {/* Bloque podio */}
@@ -91,7 +92,7 @@ export function Podium({ matches, compacto = false }: PodiumProps) {
                 <div key={`${m.a.id}-${m.b.id}`} className="flex items-center justify-between px-3 py-2 bg-white/5 rounded-lg">
                   <div className="flex items-center gap-2">
                     <span className="text-white/40 text-sm w-6 text-center">{i + 4}</span>
-                    <span className="text-white text-sm">{m.a.nombre} <span className="text-datinder-yellow">+</span> {m.b.nombre}</span>
+                    <span className="text-white text-sm">{nombreCompleto(m.a)} <span className="text-datinder-yellow">+</span> {nombreCompleto(m.b)}</span>
                   </div>
                   <span className="text-datinder-yellow font-bold text-sm">{Math.round(m.afinidad)}%</span>
                 </div>

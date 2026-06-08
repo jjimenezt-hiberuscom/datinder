@@ -8,6 +8,7 @@ export interface Sesion {
   codigo_acceso: string;
   estado: EstadoSesion;
   pregunta_actual_id: string | null;
+  pausada: boolean;
   created_at: string;
 }
 

@@ -1,6 +1,7 @@
 import { Heart } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { Match } from '@/types';
+import { nombreCompleto } from '@/lib/utils';
 
 interface MatchesListProps {
   matches: Match[];
@@ -31,15 +32,15 @@ export function MatchesList({ matches }: MatchesListProps) {
                     className="w-6 h-6 rounded-full object-cover flex-shrink-0"
                     onError={e => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${m.a.nombre}&size=32`; }}
                   />
-                  <span className="text-white text-xs font-medium truncate">{m.a.nombre}</span>
+                  <span className="text-white text-xs font-medium truncate">{nombreCompleto(m.a)}</span>
                   <span className="text-datinder-yellow text-xs">+</span>
                   <img
                     src={m.b.foto_url ?? `https://i.pravatar.cc/32?u=${m.b.id}`}
-                    alt={m.b.nombre}
+                    alt={nombreCompleto(m.b)}
                     className="w-6 h-6 rounded-full object-cover flex-shrink-0"
-                    onError={e => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${m.b.nombre}&size=32`; }}
+                    onError={e => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(nombreCompleto(m.b))}&size=32`; }}
                   />
-                  <span className="text-white text-xs font-medium truncate">{m.b.nombre}</span>
+                  <span className="text-white text-xs font-medium truncate">{nombreCompleto(m.b)}</span>
                 </div>
               </div>
               <div className="flex-shrink-0 ml-2">

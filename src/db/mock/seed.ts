@@ -9,6 +9,7 @@ export const SESION_DEMO: Sesion = {
   codigo_acceso: 'AFTERWORK',
   estado: 'jugando',
   pregunta_actual_id: null,
+  pausada: false,
   created_at: now(),
 };
 
@@ -38,45 +39,7 @@ export const PREGUNTAS_DEMO: Pregunta[] = [
 // Inicializar la primera pregunta activa
 SESION_DEMO.pregunta_actual_id = PREGUNTAS_DEMO[0].id;
 
-type BotProfile = { bias: ('A' | 'B')[] }; // bias[i] = tendencia para pregunta i
-
-export const BOT_PROFILES: BotProfile[] = [
-  { bias: ['A','A','B','A','A','A','B','A','B','A','A','A','B','A','B','A','A','B','A','B'] },
-  { bias: ['A','B','A','B','A','B','A','B','A','B','A','B','A','B','A','B','A','B','A','B'] },
-  { bias: ['B','B','A','B','B','B','A','B','A','B','B','B','A','B','A','B','B','A','B','A'] },
-  { bias: ['A','A','A','A','B','A','B','A','A','A','B','A','A','A','B','A','A','A','B','A'] },
-  { bias: ['B','A','B','B','B','B','A','B','B','B','A','B','B','B','A','B','B','B','A','B'] },
-  { bias: ['A','B','B','A','A','A','B','A','A','B','A','A','A','B','A','A','B','A','A','A'] },
-  { bias: ['B','B','B','B','A','B','B','A','B','B','B','B','A','B','B','B','B','A','B','B'] },
-  { bias: ['A','A','A','B','B','B','A','B','A','A','B','A','B','A','A','B','A','B','A','A'] },
-  { bias: ['B','A','B','A','B','A','B','A','B','A','B','A','B','A','B','A','B','A','B','A'] },
-  { bias: ['A','B','A','A','A','A','B','A','B','A','A','B','A','A','A','A','B','A','A','A'] },
-  { bias: ['B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B'] },
-  { bias: ['A','A','A','A','A','A','A','A','A','A','A','A','A','A','A','A','A','A','A','A'] },
-  { bias: ['A','B','A','B','A','A','B','A','B','A','A','B','A','A','B','A','B','A','B','A'] },
-  { bias: ['B','A','B','A','B','B','A','B','A','B','B','A','B','B','A','B','A','B','A','B'] },
-  { bias: ['A','A','B','A','B','A','A','B','A','A','B','A','B','A','A','B','A','A','B','A'] },
-  { bias: ['B','B','A','B','A','B','B','A','B','B','A','B','A','B','B','A','B','B','A','B'] },
-];
-
-export const USUARIOS_DEMO: Usuario[] = [
-  { id: 'u1',  sesion_id: SESION_DEMO.id, nombre: 'Ana',      apellidos: 'García López',     empresa: 'Telefónica',   cargo: 'Product Manager',      foto_url: 'https://i.pravatar.cc/150?img=1',  tipo: 'linkedin', expulsado: false, created_at: now() },
-  { id: 'u2',  sesion_id: SESION_DEMO.id, nombre: 'Carlos',   apellidos: 'Martínez Ruiz',    empresa: 'BBVA',         cargo: 'Data Engineer',        foto_url: 'https://i.pravatar.cc/150?img=3',  tipo: 'linkedin', expulsado: false, created_at: now() },
-  { id: 'u3',  sesion_id: SESION_DEMO.id, nombre: 'Elena',    apellidos: 'Fernández Pérez',  empresa: 'Inditex',      cargo: 'UX Designer',          foto_url: 'https://i.pravatar.cc/150?img=5',  tipo: 'invitado', expulsado: false, created_at: now() },
-  { id: 'u4',  sesion_id: SESION_DEMO.id, nombre: 'Miguel',   apellidos: 'Sánchez Torres',   empresa: 'Cabify',       cargo: 'Backend Developer',    foto_url: 'https://i.pravatar.cc/150?img=7',  tipo: 'linkedin', expulsado: false, created_at: now() },
-  { id: 'u5',  sesion_id: SESION_DEMO.id, nombre: 'Sofía',    apellidos: 'López Morales',    empresa: 'Glovo',        cargo: 'Growth Hacker',        foto_url: 'https://i.pravatar.cc/150?img=9',  tipo: 'invitado', expulsado: false, created_at: now() },
-  { id: 'u6',  sesion_id: SESION_DEMO.id, nombre: 'Pablo',    apellidos: 'Romero Castillo',  empresa: 'Santander',    cargo: 'Agile Coach',          foto_url: 'https://i.pravatar.cc/150?img=11', tipo: 'linkedin', expulsado: false, created_at: now() },
-  { id: 'u7',  sesion_id: SESION_DEMO.id, nombre: 'Laura',    apellidos: 'Jiménez Vega',     empresa: 'Amazon',       cargo: 'SRE',                  foto_url: 'https://i.pravatar.cc/150?img=13', tipo: 'invitado', expulsado: false, created_at: now() },
-  { id: 'u8',  sesion_id: SESION_DEMO.id, nombre: 'Javier',   apellidos: 'Navarro Gil',      empresa: 'Microsoft',    cargo: 'Cloud Architect',      foto_url: 'https://i.pravatar.cc/150?img=15', tipo: 'linkedin', expulsado: false, created_at: now() },
-  { id: 'u9',  sesion_id: SESION_DEMO.id, nombre: 'Marta',    apellidos: 'Molina Ramos',     empresa: 'Repsol',       cargo: 'Business Analyst',     foto_url: 'https://i.pravatar.cc/150?img=17', tipo: 'invitado', expulsado: false, created_at: now() },
-  { id: 'u10', sesion_id: SESION_DEMO.id, nombre: 'Diego',    apellidos: 'Ortega Medina',    empresa: 'Mapfre',       cargo: 'DevOps Engineer',      foto_url: 'https://i.pravatar.cc/150?img=19', tipo: 'linkedin', expulsado: false, created_at: now() },
-  { id: 'u11', sesion_id: SESION_DEMO.id, nombre: 'Isabel',   apellidos: 'Díaz Herrera',     empresa: 'Airbus',       cargo: 'Marketing Director',   foto_url: 'https://i.pravatar.cc/150?img=21', tipo: 'invitado', expulsado: false, created_at: now() },
-  { id: 'u12', sesion_id: SESION_DEMO.id, nombre: 'Rodrigo',  apellidos: 'Gutiérrez Blanco', empresa: 'Iberdrola',    cargo: 'CTO',                  foto_url: 'https://i.pravatar.cc/150?img=23', tipo: 'linkedin', expulsado: false, created_at: now() },
-  { id: 'u13', sesion_id: SESION_DEMO.id, nombre: 'Carmen',   apellidos: 'Santos Iglesias',  empresa: 'El País',      cargo: 'Frontend Developer',   foto_url: 'https://i.pravatar.cc/150?img=25', tipo: 'invitado', expulsado: false, created_at: now() },
-  { id: 'u14', sesion_id: SESION_DEMO.id, nombre: 'Álvaro',   apellidos: 'Suárez Campos',    empresa: 'Mango',        cargo: 'HR Director',          foto_url: 'https://i.pravatar.cc/150?img=27', tipo: 'linkedin', expulsado: false, created_at: now() },
-  { id: 'u15', sesion_id: SESION_DEMO.id, nombre: 'Natalia',  apellidos: 'Delgado Rueda',    empresa: 'Mercadona',    cargo: 'Data Scientist',       foto_url: 'https://i.pravatar.cc/150?img=29', tipo: 'invitado', expulsado: false, created_at: now() },
-  { id: 'u16', sesion_id: SESION_DEMO.id, nombre: 'Tomás',    apellidos: 'Vargas Esteve',    empresa: 'Vueling',      cargo: 'Finance Manager',      foto_url: 'https://i.pravatar.cc/150?img=31', tipo: 'linkedin', expulsado: false, created_at: now() },
-];
+export const USUARIOS_DEMO: Usuario[] = [];
 
 export const RESPUESTAS_INICIALES: Respuesta[] = [];
 

@@ -6,16 +6,13 @@ import { Podium } from '@/components/final/Podium';
 import { Insights } from '@/components/final/Insights';
 import { useRealtimeSession } from '@/hooks/useRealtimeSession';
 import { calcularMatches, preguntaMasPolarizada, preguntaMayorConsenso } from '@/lib/afinidad';
+import { avanzarPregunta } from '@/lib/sesion';
 import { db } from '@/db';
-import { startBots } from '@/db/mock/bots';
-
-const IS_MOCK = import.meta.env.VITE_USE_MOCK !== 'false';
 
 export function Board() {
   const { codigo = 'AFTERWORK' } = useParams<{ codigo: string }>();
   const [searchParams] = useSearchParams();
   const isPresenter = searchParams.get('rol') === 'presentador';
-  const botsStarted = useRef(false);
 
   const [sesionId, setSesionId] = React.useState<string | null>(null);
 
@@ -27,13 +24,26 @@ export function Board() {
 
   const { sesion, preguntas, usuarios, respuestas, preguntaActual, reload } = useRealtimeSession(sesionId);
 
-  // Arrancar bots en modo mock solo una vez
+  // Auto-avance: solo el presentador, cuando todos han respondido y no está pausado
+  const autoAdvancedRef = useRef<string | null>(null);
   useEffect(() => {
-    if (IS_MOCK && sesionId && !botsStarted.current) {
-      botsStarted.current = true;
-      startBots();
-    }
-  }, [sesionId]);
+    if (!isPresenter || !sesion || sesion.estado !== 'jugando' || sesion.pausada || !preguntaActual || usuarios.length === 0) return;
+
+    const votadosActual = new Set(
+      respuestas.filter(r => r.pregunta_id === preguntaActual.id).map(r => r.usuario_id)
+    ).size;
+
+    if (votadosActual < usuarios.length) return;
+    if (autoAdvancedRef.current === preguntaActual.id) return;
+
+    const timer = setTimeout(() => {
+      if (autoAdvancedRef.current === preguntaActual.id) return;
+      autoAdvancedRef.current = preguntaActual.id;
+      void avanzarPregunta(sesion, preguntas, preguntaActual);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [isPresenter, sesion, preguntaActual, respuestas, usuarios, preguntas]);
 
   const matches = React.useMemo(
     () => calcularMatches(usuarios, preguntas, respuestas),

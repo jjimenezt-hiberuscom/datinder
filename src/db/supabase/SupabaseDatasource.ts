@@ -32,6 +32,10 @@ export class SupabaseDatasource implements Datasource {
     await getSupabase().from('sesiones').update({ pregunta_actual_id: preguntaId }).eq('id', sesionId);
   }
 
+  async setPausada(sesionId: string, pausada: boolean): Promise<void> {
+    await getSupabase().from('sesiones').update({ pausada }).eq('id', sesionId);
+  }
+
   async listarSesiones(): Promise<Sesion[]> {
     const { data } = await getSupabase().from('sesiones').select('*').order('created_at', { ascending: false });
     return (data ?? []) as Sesion[];

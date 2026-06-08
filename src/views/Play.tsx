@@ -4,12 +4,13 @@ import { CheckCircle2, Loader2, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSession } from '@/context/SessionContext';
 import { useRealtimeSession } from '@/hooks/useRealtimeSession';
+import { PersonalResults } from '@/components/final/PersonalResults';
 import { db } from '@/db';
 
 export function Play() {
   const navigate = useNavigate();
   const { usuario, sesion, logout } = useSession();
-  const { sesion: sesionLive, preguntaActual, respuestas } = useRealtimeSession(sesion?.id ?? null);
+  const { sesion: sesionLive, preguntaActual, respuestas, usuarios, preguntas } = useRealtimeSession(sesion?.id ?? null);
   const [votando, setVotando] = useState(false);
   const [elegida, setElegida] = useState<'A' | 'B' | null>(null);
 
@@ -40,14 +41,15 @@ export function Play() {
   // Estado finalizado
   if (sesionLive?.estado === 'finalizado') {
     return (
-      <div className="min-h-screen bg-datinder-bg flex flex-col items-center justify-center p-6 text-center">
-        <span className="text-6xl mb-4">🎉</span>
-        <h2 className="text-datinder-yellow font-black text-3xl mb-2">¡Quiz Finalizado!</h2>
-        <p className="text-white/60 mb-6">Gracias por participar. Mira la pantalla principal para ver los resultados.</p>
-        <Button variant="ghost" className="text-white/40 gap-2" onClick={logout}>
-          <LogOut className="w-4 h-4" /> Salir
-        </Button>
-      </div>
+      <PersonalResults
+        usuarioId={usuario.id}
+        usuarioNombre={usuario.nombre}
+        usuarios={usuarios}
+        preguntas={preguntas}
+        respuestas={respuestas}
+        sesionCodigo={sesionLive.codigo_acceso}
+        onLogout={logout}
+      />
     );
   }
 

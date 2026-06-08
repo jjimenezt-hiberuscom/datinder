@@ -24,6 +24,7 @@ export interface Datasource {
   getSesionById(id: string): Promise<Sesion | null>;
   setEstado(sesionId: string, estado: EstadoSesion): Promise<void>;
   setPreguntaActual(sesionId: string, preguntaId: string | null): Promise<void>;
+  setPausada(sesionId: string, pausada: boolean): Promise<void>;
   listarSesiones(): Promise<Sesion[]>;
   // preguntas
   listarPreguntas(sesionId: string): Promise<Pregunta[]>;
