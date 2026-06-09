@@ -16,7 +16,7 @@ export function Lobby() {
   }, [usuario, sesion, navigate]);
 
   useEffect(() => {
-    if (sesionLive?.estado === 'jugando') {
+    if (sesionLive?.estado === 'jugando' || sesionLive?.estado === 'finalizado') {
       navigate('/play');
     }
   }, [sesionLive?.estado, navigate]);
