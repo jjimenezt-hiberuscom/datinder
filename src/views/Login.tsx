@@ -91,7 +91,7 @@ export function Login() {
       <div className="w-full max-w-sm space-y-4">
         {/* Logo */}
         <div className="text-center mb-8">
-          <img src="/logo.png" alt="search-mmatch-tica" className="h-32 mx-auto" />
+          <img src="/logo.png" alt="search-mmatch-tica" className="h-48 mx-auto" />
         </div>
 
         {step === 'login' ? (
