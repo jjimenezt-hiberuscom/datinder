@@ -78,8 +78,9 @@ export function Login() {
       setUsuario(usuario);
       setSesion(sesion);
       navigate('/lobby');
-    } catch {
-      setError('Error al unirse. Inténtalo de nuevo.');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : JSON.stringify(err);
+      setError(`Error: ${msg}`);
     } finally {
       setLoading(false);
     }
