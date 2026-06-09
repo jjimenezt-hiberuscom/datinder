@@ -6,6 +6,7 @@ import { Confetti } from './Confetti';
 import type { Match } from '@/types';
 import { exportarRankingCSV } from '@/lib/exportCsv';
 import { nombreCompleto } from '@/lib/utils';
+import { getAvatar } from '@/lib/avatar';
 
 interface PodiumProps {
   matches: Match[];
@@ -28,16 +29,14 @@ function PodiumSlot({ match, pos, delay }: { match: Match; pos: 1 | 2 | 3; delay
       {/* Avatares */}
       <div className="flex -space-x-3">
         <img
-          src={match.a.foto_url ?? `https://i.pravatar.cc/80?u=${match.a.id}`}
+          src={getAvatar(match.a.id, match.a.foto_url)}
           alt={match.a.nombre}
           className="w-12 h-12 rounded-full border-2 border-datinder-yellow object-cover"
-          onError={e => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${match.a.nombre}&background=ffd60a&color=0d1b2a`; }}
         />
         <img
-          src={match.b.foto_url ?? `https://i.pravatar.cc/80?u=${match.b.id}`}
+          src={getAvatar(match.b.id, match.b.foto_url)}
           alt={match.b.nombre}
           className="w-12 h-12 rounded-full border-2 border-datinder-yellow object-cover"
-          onError={e => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${match.b.nombre}&background=ffd60a&color=0d1b2a`; }}
         />
       </div>
       <div className="text-center">

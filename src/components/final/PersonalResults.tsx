@@ -2,6 +2,7 @@ import { LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { calcularMatches } from '@/lib/afinidad';
 import { nombreCompleto } from '@/lib/utils';
+import { getAvatar } from '@/lib/avatar';
 import type { Usuario, Pregunta, Respuesta } from '@/types';
 
 interface PersonalResultsProps {
@@ -37,10 +38,9 @@ export function PersonalResults({ usuarioId, usuarioNombre, usuarios, preguntas,
               <div key={m.otro.id} className="flex items-center gap-3 bg-white/5 rounded-2xl px-4 py-3 border border-white/10">
                 <span className="text-2xl w-8">{MEDALS[i]}</span>
                 <img
-                  src={m.otro.foto_url ?? `https://i.pravatar.cc/80?u=${m.otro.id}`}
+                  src={getAvatar(m.otro.id, m.otro.foto_url)}
                   alt={nombreCompleto(m.otro)}
                   className="w-10 h-10 rounded-full object-cover border-2 border-datinder-yellow flex-shrink-0"
-                  onError={e => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(nombreCompleto(m.otro))}&background=ffd60a&color=0d1b2a`; }}
                 />
                 <span className="text-white font-medium text-sm flex-1 text-left truncate">{nombreCompleto(m.otro)}</span>
                 <span className="text-datinder-yellow font-black text-lg tabular-nums">{Math.round(m.afinidad)}%</span>

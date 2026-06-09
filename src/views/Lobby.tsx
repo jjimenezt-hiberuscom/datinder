@@ -4,6 +4,7 @@ import { Users, Loader2, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSession } from '@/context/SessionContext';
 import { useRealtimeSession } from '@/hooks/useRealtimeSession';
+import { getAvatar } from '@/lib/avatar';
 
 export function Lobby() {
   const navigate = useNavigate();
@@ -30,10 +31,9 @@ export function Lobby() {
       {/* Tarjeta usuario */}
       <div className="bg-white/5 border border-white/10 rounded-2xl p-6 w-full max-w-sm text-center mb-6">
         <img
-          src={usuario.foto_url ?? `https://i.pravatar.cc/80?u=${usuario.id}`}
+          src={getAvatar(usuario.id, usuario.foto_url)}
           alt={usuario.nombre}
           className="w-20 h-20 rounded-full border-2 border-datinder-yellow object-cover mx-auto mb-3"
-          onError={e => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${usuario.nombre}&background=ffd60a&color=0d1b2a`; }}
         />
         <h2 className="text-white font-bold text-lg">{usuario.nombre} {usuario.apellidos}</h2>
         {usuario.empresa && <p className="text-white/50 text-sm">{usuario.cargo} · {usuario.empresa}</p>}

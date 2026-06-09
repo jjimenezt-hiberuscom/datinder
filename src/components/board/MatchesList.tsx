@@ -2,6 +2,7 @@ import { Heart } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { Match } from '@/types';
 import { nombreCompleto } from '@/lib/utils';
+import { getAvatar } from '@/lib/avatar';
 
 interface MatchesListProps {
   matches: Match[];
@@ -27,18 +28,16 @@ export function MatchesList({ matches }: MatchesListProps) {
                 <span className="text-white/40 text-xs w-5 text-center font-mono">{i + 1}</span>
                 <div className="flex items-center gap-1 min-w-0">
                   <img
-                    src={m.a.foto_url ?? `https://i.pravatar.cc/32?u=${m.a.id}`}
+                    src={getAvatar(m.a.id, m.a.foto_url)}
                     alt={m.a.nombre}
                     className="w-6 h-6 rounded-full object-cover flex-shrink-0"
-                    onError={e => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${m.a.nombre}&size=32`; }}
                   />
                   <span className="text-white text-xs font-medium truncate">{nombreCompleto(m.a)}</span>
                   <span className="text-datinder-yellow text-xs">+</span>
                   <img
-                    src={m.b.foto_url ?? `https://i.pravatar.cc/32?u=${m.b.id}`}
+                    src={getAvatar(m.b.id, m.b.foto_url)}
                     alt={nombreCompleto(m.b)}
                     className="w-6 h-6 rounded-full object-cover flex-shrink-0"
-                    onError={e => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(nombreCompleto(m.b))}&size=32`; }}
                   />
                   <span className="text-white text-xs font-medium truncate">{nombreCompleto(m.b)}</span>
                 </div>
