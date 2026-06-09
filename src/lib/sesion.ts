@@ -10,6 +10,7 @@ export async function avanzarPregunta(
   const idx = sorted.findIndex(p => p.id === preguntaActual?.id);
   if (idx < sorted.length - 1) {
     await db.setPreguntaActual(sesion.id, sorted[idx + 1].id);
+    if (sesion.estado !== 'jugando') await db.setEstado(sesion.id, 'jugando');
   } else {
     await db.setEstado(sesion.id, 'finalizado');
   }
