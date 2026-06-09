@@ -25,7 +25,7 @@ export function Lobby() {
   return (
     <div className="min-h-screen bg-datinder-bg flex flex-col items-center justify-center p-4">
       {/* Logo */}
-      <h1 className="text-datinder-yellow font-black text-3xl mb-8">Datinder</h1>
+      <img src="/logo.png" alt="search-mmatch-tica" className="h-20 mx-auto mb-8" />
 
       {/* Tarjeta usuario */}
       <div className="bg-white/5 border border-white/10 rounded-2xl p-6 w-full max-w-sm text-center mb-6">

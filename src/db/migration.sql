@@ -39,6 +39,8 @@ create table if not exists usuarios (
   foto_url text,
   tipo text not null default 'invitado',
   -- 'linkedin' | 'invitado'
+  area text,
+  -- 'gastaperras' | 'analistos' | 'caza_keywords'
   expulsado boolean default false,
   created_at timestamptz default now()
 );

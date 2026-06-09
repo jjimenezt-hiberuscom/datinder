@@ -56,7 +56,7 @@ export function Board() {
     return (
       <div className="min-h-screen bg-datinder-bg flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-datinder-yellow font-black text-4xl mb-2">Datinder</h1>
+          <img src="/logo.png" alt="search-mmatch-tica" className="h-16 mx-auto mb-2" />
           <p className="text-white/50">Cargando sesión <span className="font-mono">{codigo}</span>...</p>
         </div>
       </div>

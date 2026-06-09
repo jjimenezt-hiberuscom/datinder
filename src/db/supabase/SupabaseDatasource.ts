@@ -4,7 +4,7 @@ import { getSupabase } from './client';
 
 export class SupabaseDatasource implements Datasource {
   async crearSesion(nombre: string): Promise<Sesion> {
-    const codigo = nombre.toUpperCase().replace(/\s+/g, '').slice(0, 8) + Math.floor(Math.random() * 100);
+    const codigo = nombre.toUpperCase().replace(/\s+/g, '');
     const { data, error } = await getSupabase()
       .from('sesiones')
       .insert({ nombre_evento: nombre, codigo_acceso: codigo, estado: 'espera' })
@@ -19,7 +19,7 @@ export class SupabaseDatasource implements Datasource {
   }
 
   async clonarSesion(sesionId: string, nuevoNombre: string): Promise<Sesion> {
-    const codigo = nuevoNombre.toUpperCase().replace(/\s+/g, '').slice(0, 8) + Math.floor(Math.random() * 100);
+    const codigo = nuevoNombre.toUpperCase().replace(/\s+/g, '');
     const { data: nueva, error } = await getSupabase()
       .from('sesiones')
       .insert({ nombre_evento: nuevoNombre, codigo_acceso: codigo, estado: 'espera', pausada: false })

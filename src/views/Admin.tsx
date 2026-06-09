@@ -30,7 +30,7 @@ function AdminLogin({ onLogin }: { onLogin: (u: string, p: string) => boolean })
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle className="text-center flex items-center justify-center gap-2">
-            <Settings className="w-5 h-5" /> Admin — Datinder
+            <Settings className="w-5 h-5" /> Admin — search-mmatch-tica
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -79,7 +79,7 @@ export function Admin() {
       <header className="border-b bg-background sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="font-black text-xl text-datinder-bg">Datinder</span>
+            <img src="/logo.png" alt="search-mmatch-tica" className="h-8" />
             <span className="text-muted-foreground text-sm">/ Admin</span>
           </div>
           <div className="flex items-center gap-3">
@@ -132,7 +132,7 @@ export function Admin() {
           <TabsContent value="eventos">
             <div className="space-y-2 mb-6">
               <h2 className="text-xl font-bold">Gestión de Eventos</h2>
-              <p className="text-muted-foreground text-sm">Crea y gestiona tus sesiones de Datinder</p>
+              <p className="text-muted-foreground text-sm">Crea y gestiona tus sesiones de search-mmatch-tica</p>
             </div>
             <EventList />
           </TabsContent>

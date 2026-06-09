@@ -1,6 +1,13 @@
 export type EstadoSesion = 'espera' | 'jugando' | 'finalizado';
 export type Eleccion = 'A' | 'B';
 export type TipoUsuario = 'linkedin' | 'invitado';
+export type Area = 'gastaperras' | 'analistos' | 'caza_keywords';
+
+export const AREA_LABELS: Record<Area, string> = {
+  gastaperras: 'Gastaperras',
+  analistos: 'Analistos',
+  caza_keywords: 'Caza Keywords',
+};
 
 export interface Sesion {
   id: string;
@@ -31,6 +38,7 @@ export interface Usuario {
   cargo?: string;
   foto_url?: string;
   tipo: TipoUsuario;
+  area?: Area;
   expulsado: boolean;
   created_at: string;
 }

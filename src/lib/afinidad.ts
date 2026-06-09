@@ -1,5 +1,14 @@
-import type { Usuario, Pregunta, Respuesta, Match, InsightsPregunta } from '../types';
+import type { Usuario, Pregunta, Respuesta, Match, InsightsPregunta, Area } from '../types';
+import { AREA_LABELS } from '../types';
 import { MATCHES_DESDE_PREGUNTA } from '../config';
+
+export type AreaCompat = {
+  areaA: Area;
+  areaB: Area;
+  label: string;
+  afinidadMedia: number;
+  numParejas: number;
+};
 
 /** Votos agrupados por usuario */
 type VotosPorUsuario = Map<string, Map<string, 'A' | 'B'>>;
@@ -126,4 +135,34 @@ function insightsDe(
 export function afinidadMedia(matches: Match[]): number {
   if (matches.length === 0) return 0;
   return matches.reduce((s, m) => s + m.afinidad, 0) / matches.length;
+}
+
+/** Compatibilidad media entre cada par de áreas (incluyendo misma área) */
+export function compatibilidadPorArea(matches: Match[]): AreaCompat[] {
+  const buckets = new Map<string, { sum: number; count: number; areaA: Area; areaB: Area }>();
+
+  for (const m of matches) {
+    const aa = m.a.area;
+    const ab = m.b.area;
+    if (!aa || !ab) continue;
+    // clave canónica: orden alfabético para no duplicar A-B y B-A
+    const [k1, k2] = aa <= ab ? [aa, ab] : [ab, aa];
+    const key = `${k1}|${k2}`;
+    const bucket = buckets.get(key) ?? { sum: 0, count: 0, areaA: k1 as Area, areaB: k2 as Area };
+    bucket.sum += m.afinidad;
+    bucket.count += 1;
+    buckets.set(key, bucket);
+  }
+
+  return Array.from(buckets.values())
+    .map(b => ({
+      areaA: b.areaA,
+      areaB: b.areaB,
+      label: b.areaA === b.areaB
+        ? AREA_LABELS[b.areaA]
+        : `${AREA_LABELS[b.areaA]} ↔ ${AREA_LABELS[b.areaB]}`,
+      afinidadMedia: b.sum / b.count,
+      numParejas: b.count,
+    }))
+    .sort((a, b) => b.afinidadMedia - a.afinidadMedia);
 }

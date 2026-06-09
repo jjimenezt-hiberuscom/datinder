@@ -1,4 +1,4 @@
-import type { Sesion, Pregunta, Usuario, Respuesta, EstadoSesion, Eleccion, TipoUsuario } from '../types';
+import type { Sesion, Pregunta, Usuario, Respuesta, EstadoSesion, Eleccion, TipoUsuario, Area } from '../types';
 
 export interface DatosUsuario {
   nombre: string;
@@ -7,6 +7,7 @@ export interface DatosUsuario {
   cargo?: string;
   foto_url?: string;
   tipo: TipoUsuario;
+  area?: Area;
 }
 
 export interface DatosPregunta {

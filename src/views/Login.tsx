@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useSession } from '@/context/SessionContext';
 import { db } from '@/db';
 import { uploadFoto } from '@/lib/storage';
+import type { Area } from '@/types';
+import { AREA_LABELS } from '@/types';
 
 export function Login() {
   const navigate = useNavigate();
@@ -23,7 +25,7 @@ export function Login() {
   }, [usuario, sesion, navigate]);
 
   // Formulario invitado
-  const [form, setForm] = useState({ nombre: '', apellidos: '' });
+  const [form, setForm] = useState({ nombre: '', apellidos: '', area: '' as Area | '' });
   const [fotoFile, setFotoFile] = useState<File | null>(null);
   const [fotoPreview, setFotoPreview] = useState<string | null>(null);
   const fotoInputRef = useRef<HTMLInputElement>(null);
@@ -35,7 +37,7 @@ export function Login() {
 
   // Step: 'login' | 'codigo'
   const [step, setStep] = useState<'login' | 'codigo'>('login');
-  const [pendingUser, setPendingUser] = useState<{ nombre: string; apellidos: string; foto_url: string } | null>(null);
+  const [pendingUser, setPendingUser] = useState<{ nombre: string; apellidos: string; foto_url: string; area: Area | '' } | null>(null);
 
   function handleFotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -47,6 +49,7 @@ export function Login() {
   function handleGuestSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.nombre.trim() || !form.apellidos.trim()) { setError('Nombre y apellidos son obligatorios'); return; }
+    if (!form.area) { setError('Selecciona tu área'); return; }
     setPendingUser({ ...form, foto_url: fotoPreview ?? '' });
     setStep('codigo');
     setError('');
@@ -70,6 +73,7 @@ export function Login() {
         ...pendingUser!,
         foto_url: foto_url || undefined,
         tipo: 'invitado',
+        area: pendingUser!.area || undefined,
       });
       setUsuario(usuario);
       setSesion(sesion);
@@ -86,8 +90,8 @@ export function Login() {
       <div className="w-full max-w-sm space-y-4">
         {/* Logo */}
         <div className="text-center mb-8">
-          <h1 className="text-datinder-yellow font-black text-4xl tracking-tight">Datinder</h1>
-          <p className="text-white/50 text-sm mt-1">Compatibilidad en tiempo real</p>
+          <img src="/logo.png" alt="search-mmatch-tica" className="h-20 mx-auto" />
+          <p className="text-white/50 text-sm mt-3">Compatibilidad en tiempo real</p>
         </div>
 
         {step === 'login' ? (
@@ -112,6 +116,27 @@ export function Login() {
                       onChange={e => setForm(f => ({ ...f, apellidos: e.target.value }))}
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/30 mt-1"
                     />
+                  </div>
+                </div>
+
+                {/* Área */}
+                <div>
+                  <Label className="text-white/70 text-xs">Área *</Label>
+                  <div className="grid grid-cols-3 gap-2 mt-1">
+                    {(Object.keys(AREA_LABELS) as Area[]).map(a => (
+                      <button
+                        key={a}
+                        type="button"
+                        onClick={() => setForm(f => ({ ...f, area: a }))}
+                        className={`py-2 px-1 rounded-lg text-xs font-bold border-2 transition-all ${
+                          form.area === a
+                            ? 'bg-datinder-yellow text-datinder-bg border-datinder-yellow'
+                            : 'bg-white/5 text-white/60 border-white/20 hover:border-white/40'
+                        }`}
+                      >
+                        {AREA_LABELS[a]}
+                      </button>
+                    ))}
                   </div>
                 </div>
 

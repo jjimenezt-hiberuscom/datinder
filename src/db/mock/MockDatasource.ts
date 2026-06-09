@@ -16,7 +16,7 @@ function notificar(sesionId: string) {
 export class MockDatasource implements Datasource {
   // ── sesiones ─────────────────────────────────────────────────────────────
   async crearSesion(nombre: string): Promise<Sesion> {
-    const codigo = nombre.toUpperCase().replace(/\s+/g, '').slice(0, 8) + Math.floor(Math.random() * 100);
+    const codigo = nombre.toUpperCase().replace(/\s+/g, '');
     const s: Sesion = {
       id: generarId(),
       nombre_evento: nombre,
@@ -44,7 +44,7 @@ export class MockDatasource implements Datasource {
   }
 
   async clonarSesion(sesionId: string, nuevoNombre: string): Promise<Sesion> {
-    const codigo = nuevoNombre.toUpperCase().replace(/\s+/g, '').slice(0, 8) + Math.floor(Math.random() * 100);
+    const codigo = nuevoNombre.toUpperCase().replace(/\s+/g, '');
     const nueva: Sesion = {
       id: generarId(),
       nombre_evento: nuevoNombre,
