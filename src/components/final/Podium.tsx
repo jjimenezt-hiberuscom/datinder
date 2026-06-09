@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Confetti } from './Confetti';
 import type { Match } from '@/types';
 import { exportarRankingCSV } from '@/lib/exportCsv';
@@ -53,7 +52,6 @@ function PodiumSlot({ match, pos, delay }: { match: Match; pos: 1 | 2 | 3; delay
 
 export function Podium({ matches, compacto = false }: PodiumProps) {
   const top3 = matches.slice(0, 3);
-  const resto = matches.slice(3);
 
   return (
     <div className="relative">
@@ -75,31 +73,6 @@ export function Podium({ matches, compacto = false }: PodiumProps) {
           />
         ))}
       </div>
-
-      {/* Ranking completo */}
-      {!compacto && resto.length > 0 && (
-        <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-white font-bold">Ranking completo</h3>
-            <Button variant="yellow" size="sm" onClick={() => exportarRankingCSV(matches)}>
-              <Download className="w-4 h-4 mr-1" /> Descargar CSV
-            </Button>
-          </div>
-          <ScrollArea className="h-48">
-            <div className="space-y-1 pr-2">
-              {resto.map((m, i) => (
-                <div key={`${m.a.id}-${m.b.id}`} className="flex items-center justify-between px-3 py-2 bg-white/5 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <span className="text-white/40 text-sm w-6 text-center">{i + 4}</span>
-                    <span className="text-white text-sm">{nombreCompleto(m.a)} <span className="text-datinder-yellow">+</span> {nombreCompleto(m.b)}</span>
-                  </div>
-                  <span className="text-datinder-yellow font-bold text-sm">{Math.round(m.afinidad)}%</span>
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
-        </div>
-      )}
 
       {/* Botón CSV en compacto */}
       {compacto && (
