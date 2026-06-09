@@ -35,17 +35,62 @@ const BADGES = [
 
 const MEDALS = ['🥇', '🥈', '🥉'];
 
+// Accent colour for the % figure: golden ≥70, bright white ≥50, muted below
+const pctColor = (pct: number) =>
+  pct >= 70 ? 'text-datinder-yellow' : pct >= 50 ? 'text-white' : 'text-white/50';
+
 function AreaTile({ label, afinidadMedia: pct, numParejas, pos }: { label: string; afinidadMedia: number; numParejas: number; pos: number }) {
+  // Hero card — takes the full row to read unambiguously as #1
+  if (pos === 0) {
+    return (
+      <div className="col-span-2 md:col-span-3 relative rounded-2xl overflow-hidden border border-datinder-yellow/40">
+        {/* gold gradient fill */}
+        <div className="absolute inset-0 bg-gradient-to-br from-datinder-yellow/20 via-datinder-yellow-dark/10 to-transparent" />
+        <div className="relative flex items-center gap-4 px-5 py-4">
+          {/* medal */}
+          <span className="text-4xl leading-none flex-shrink-0 animate-bounce-in">{MEDALS[0]}</span>
+          {/* label */}
+          <div className="flex-1 min-w-0">
+            <p className="text-white font-bold text-base md:text-lg leading-tight truncate">{label}</p>
+            <p className="text-white/40 text-xs mt-0.5">{numParejas} {numParejas === 1 ? 'pareja' : 'parejas'}</p>
+          </div>
+          {/* pct — large and prominent */}
+          <p className="text-datinder-yellow font-black text-5xl md:text-6xl tabular-nums flex-shrink-0">
+            {Math.round(pct)}%
+          </p>
+        </div>
+        {/* bottom bar shows fullness */}
+        <div className="relative h-1 bg-white/10">
+          <div
+            className="absolute inset-y-0 left-0 bg-gradient-to-r from-datinder-yellow to-datinder-yellow-dark"
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // Runner-up tiles (pos 1, 2) — medium with medal
+  if (pos <= 2) {
+    return (
+      <div className="relative bg-white/5 border border-white/10 rounded-xl p-3 text-center">
+        <span className="absolute top-2 left-2 text-lg leading-none">{MEDALS[pos]}</span>
+        <p className="text-white/60 text-xs mb-1 leading-tight mt-4">{label}</p>
+        <p className={`font-black text-3xl tabular-nums ${pctColor(pct)}`}>{Math.round(pct)}%</p>
+        <p className="text-white/30 text-xs mt-1">{numParejas} {numParejas === 1 ? 'pareja' : 'parejas'}</p>
+        <div className="mt-2 h-0.5 bg-white/10 rounded-full overflow-hidden">
+          <div className="h-full bg-white/30" style={{ width: `${pct}%` }} />
+        </div>
+      </div>
+    );
+  }
+
+  // Remaining tiles — compact
   return (
-    <div className="bg-white/5 rounded-xl p-3 text-center relative">
-      {pos < 3 && (
-        <span className="absolute top-2 left-2 text-base leading-none">{MEDALS[pos]}</span>
-      )}
-      <p className="text-white/60 text-xs mb-1 leading-tight">{label}</p>
-      <p className={`font-black text-2xl tabular-nums ${pct >= 70 ? 'text-datinder-yellow' : pct >= 50 ? 'text-white' : 'text-white/50'}`}>
-        {Math.round(pct)}%
-      </p>
-      <p className="text-white/30 text-xs mt-1">{numParejas} {numParejas === 1 ? 'pareja' : 'parejas'}</p>
+    <div className="relative bg-white/5 rounded-xl p-3 text-center">
+      <p className="text-white/50 text-xs mb-1 leading-tight">{label}</p>
+      <p className={`font-bold text-xl tabular-nums ${pctColor(pct)}`}>{Math.round(pct)}%</p>
+      <p className="text-white/30 text-[10px] mt-1">{numParejas} {numParejas === 1 ? 'pareja' : 'parejas'}</p>
     </div>
   );
 }
@@ -115,15 +160,24 @@ export function Insights({ polarizada, consenso, matches }: InsightsProps) {
 
       {/* Compatibilidad entre áreas */}
       {areaCompats.length > 0 && (
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
-          <div className="flex items-center gap-2 mb-4">
+        <div className="rounded-2xl overflow-hidden border border-white/10">
+          {/* Section header */}
+          <div className="bg-white/5 px-5 py-4 flex items-center gap-3 border-b border-white/10">
             <span className="text-2xl">🏢</span>
-            <h4 className="text-datinder-yellow font-bold text-sm uppercase tracking-wide">Compatibilidad entre áreas</h4>
+            <h4 className="text-datinder-yellow font-bold text-sm uppercase tracking-widest flex-1">
+              Compatibilidad entre áreas
+            </h4>
           </div>
 
+          {/* Cross-area — warm, gold-accented */}
           {crossArea.length > 0 && (
-            <div className="mb-4">
-              <p className="text-white/40 text-xs uppercase tracking-wider mb-2">Entre áreas distintas</p>
+            <div className="px-4 pt-4 pb-5">
+              <div className="flex items-center gap-2 mb-3">
+                {/* accent pill */}
+                <span className="bg-datinder-yellow/20 border border-datinder-yellow/30 text-datinder-yellow text-xs font-semibold uppercase tracking-widest px-2.5 py-0.5 rounded-full">
+                  Entre áreas distintas
+                </span>
+              </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {crossArea.map((c, i) => (
                   <AreaTile key={`${c.areaA}-${c.areaB}`} label={c.label} afinidadMedia={c.afinidadMedia} numParejas={c.numParejas} pos={i} />
@@ -132,9 +186,19 @@ export function Insights({ polarizada, consenso, matches }: InsightsProps) {
             </div>
           )}
 
+          {/* Divider between groups */}
+          {crossArea.length > 0 && sameArea.length > 0 && (
+            <div className="mx-4 border-t border-white/10" />
+          )}
+
+          {/* Same-area — cooler, outlined treatment */}
           {sameArea.length > 0 && (
-            <div>
-              <p className="text-white/40 text-xs uppercase tracking-wider mb-2">Dentro de la misma área</p>
+            <div className="px-4 pt-4 pb-5">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="bg-white/5 border border-white/20 text-white/60 text-xs font-semibold uppercase tracking-widest px-2.5 py-0.5 rounded-full">
+                  Dentro de la misma área
+                </span>
+              </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {sameArea.map((c, i) => (
                   <AreaTile key={`${c.areaA}-${c.areaB}`} label={c.label} afinidadMedia={c.afinidadMedia} numParejas={c.numParejas} pos={i} />
