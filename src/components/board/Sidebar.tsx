@@ -42,6 +42,11 @@ export function Sidebar({ sesion, usuarios, matches, preguntas, preguntaActual, 
 
   return (
     <aside className="flex flex-col gap-4 h-full">
+      {/* Logo */}
+      <div className="flex justify-center">
+        <img src="/logo-horizontal.png" alt="search-mmatch-tica" className="h-12 w-auto" />
+      </div>
+
       {/* QR + Participantes */}
       <div className="bg-white rounded-2xl p-5 flex flex-col items-center gap-3">
         {/* QR real */}
