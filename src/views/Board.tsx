@@ -76,7 +76,12 @@ export function Board() {
   }
 
   return (
-    <div className="min-h-screen bg-datinder-bg p-4 md:p-6 overflow-hidden">
+    <div className="relative min-h-screen bg-datinder-bg p-4 md:p-6 overflow-hidden">
+      <img
+        src="/logo-horizontal.png"
+        alt="search-mmatch-tica"
+        className="absolute bottom-4 right-5 h-7 w-auto brightness-0 invert opacity-25 pointer-events-none select-none"
+      />
       <div className="max-w-7xl mx-auto h-[calc(100vh-3rem)] grid grid-cols-[280px_1fr] gap-6">
         <Sidebar
           sesion={sesion}

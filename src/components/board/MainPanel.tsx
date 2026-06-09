@@ -28,7 +28,12 @@ export function MainPanel({ sesion, preguntaActual, preguntas, respuestas }: Mai
   if (sesion.estado === 'espera') {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <div className="text-center space-y-4">
+        <div className="text-center space-y-6">
+          <img
+            src="/logo-horizontal.png"
+            alt="search-mmatch-tica"
+            className="h-14 w-auto mx-auto brightness-0 invert opacity-80"
+          />
           <div className="w-20 h-20 rounded-full bg-datinder-yellow/20 flex items-center justify-center mx-auto animate-pulse-slow">
             <span className="text-4xl">⏳</span>
           </div>
@@ -76,11 +81,6 @@ export function MainPanel({ sesion, preguntaActual, preguntas, respuestas }: Mai
           <span className="text-white font-bold tabular-nums">{totalVotos}</span>
           <span className="text-white/50 text-sm">respuestas</span>
         </div>
-      </div>
-
-      {/* Logo */}
-      <div className="flex justify-center">
-        <img src="/logo-horizontal.png" alt="search-mmatch-tica" className="h-10 w-auto" />
       </div>
 
       {/* Tarjeta de pregunta */}
