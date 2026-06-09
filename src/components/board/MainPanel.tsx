@@ -78,6 +78,11 @@ export function MainPanel({ sesion, preguntaActual, preguntas, respuestas }: Mai
         </div>
       </div>
 
+      {/* Logo */}
+      <div className="flex justify-center">
+        <img src="/logo-horizontal.png" alt="search-mmatch-tica" className="h-10 w-auto" />
+      </div>
+
       {/* Tarjeta de pregunta */}
       <div className="flex-1 bg-white rounded-3xl p-8 flex items-center justify-center shadow-2xl">
         <h2 className="text-datinder-bg text-3xl xl:text-4xl font-bold text-center leading-snug max-w-2xl">
