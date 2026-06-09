@@ -33,9 +33,14 @@ const BADGES = [
   { label: '3º', bg: 'bg-amber-600',  text: 'text-amber-100' },
 ];
 
-function AreaTile({ label, afinidadMedia: pct, numParejas }: { label: string; afinidadMedia: number; numParejas: number }) {
+const MEDALS = ['🥇', '🥈', '🥉'];
+
+function AreaTile({ label, afinidadMedia: pct, numParejas, pos }: { label: string; afinidadMedia: number; numParejas: number; pos: number }) {
   return (
-    <div className="bg-white/5 rounded-xl p-3 text-center">
+    <div className="bg-white/5 rounded-xl p-3 text-center relative">
+      {pos < 3 && (
+        <span className="absolute top-2 left-2 text-base leading-none">{MEDALS[pos]}</span>
+      )}
       <p className="text-white/60 text-xs mb-1 leading-tight">{label}</p>
       <p className={`font-black text-2xl tabular-nums ${pct >= 70 ? 'text-datinder-yellow' : pct >= 50 ? 'text-white' : 'text-white/50'}`}>
         {Math.round(pct)}%
@@ -120,8 +125,8 @@ export function Insights({ polarizada, consenso, matches }: InsightsProps) {
             <div className="mb-4">
               <p className="text-white/40 text-xs uppercase tracking-wider mb-2">Entre áreas distintas</p>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {crossArea.map(c => (
-                  <AreaTile key={`${c.areaA}-${c.areaB}`} label={c.label} afinidadMedia={c.afinidadMedia} numParejas={c.numParejas} />
+                {crossArea.map((c, i) => (
+                  <AreaTile key={`${c.areaA}-${c.areaB}`} label={c.label} afinidadMedia={c.afinidadMedia} numParejas={c.numParejas} pos={i} />
                 ))}
               </div>
             </div>
@@ -131,8 +136,8 @@ export function Insights({ polarizada, consenso, matches }: InsightsProps) {
             <div>
               <p className="text-white/40 text-xs uppercase tracking-wider mb-2">Dentro de la misma área</p>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {sameArea.map(c => (
-                  <AreaTile key={`${c.areaA}-${c.areaB}`} label={c.label} afinidadMedia={c.afinidadMedia} numParejas={c.numParejas} />
+                {sameArea.map((c, i) => (
+                  <AreaTile key={`${c.areaA}-${c.areaB}`} label={c.label} afinidadMedia={c.afinidadMedia} numParejas={c.numParejas} pos={i} />
                 ))}
               </div>
             </div>
