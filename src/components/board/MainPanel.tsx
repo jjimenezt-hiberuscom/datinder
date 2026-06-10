@@ -7,12 +7,13 @@ interface MainPanelProps {
   preguntaActual: Pregunta | null;
   preguntas: Pregunta[];
   respuestas: Respuesta[];
+  totalUsuarios: number;
 }
 
 const EMOJIS_A = ['🅰️', '⚡', '🌅', '🚀', '💡', '📈', '🏆', '🔥', '✨', '🎯'];
 const EMOJIS_B = ['🅱️', '🌙', '🦉', '🏛️', '🔒', '🧠', '🤝', '❄️', '💫', '🎲'];
 
-export function MainPanel({ sesion, preguntaActual, preguntas, respuestas }: MainPanelProps) {
+export function MainPanel({ sesion, preguntaActual, preguntas, respuestas, totalUsuarios }: MainPanelProps) {
   const total = preguntas.length;
   const actual = preguntas.findIndex(p => p.id === preguntaActual?.id) + 1;
 
@@ -78,7 +79,7 @@ export function MainPanel({ sesion, preguntaActual, preguntas, respuestas }: Mai
         </div>
         <div className="flex items-center gap-2 bg-white/10 rounded-full px-4 py-1.5">
           <CheckCircle className="w-4 h-4 text-datinder-yellow" />
-          <span className="text-white font-bold tabular-nums">{totalVotos}</span>
+          <span className="text-white font-bold tabular-nums">{totalVotos} / {totalUsuarios}</span>
           <span className="text-white/50 text-sm">respuestas</span>
         </div>
       </div>
