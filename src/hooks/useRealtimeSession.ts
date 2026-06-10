@@ -48,9 +48,18 @@ export function useRealtimeSession(sesionId: string | null): RealtimeSessionData
     }
 
     void fetchAll();
-    const unsub = db.suscribir(sesionId, () => { void fetchAll(); });
 
-    return () => { cancelled = true; unsub(); };
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    const unsub = db.suscribir(sesionId, () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => { void fetchAll(); }, 300);
+    });
+
+    return () => {
+      cancelled = true;
+      if (debounceTimer) clearTimeout(debounceTimer);
+      unsub();
+    };
   }, [sesionId, reloadRef.current]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const preguntaActual = sesion?.pregunta_actual_id

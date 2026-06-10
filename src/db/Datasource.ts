@@ -39,7 +39,7 @@ export interface Datasource {
   listarUsuarios(sesionId: string): Promise<Usuario[]>;
   expulsar(usuarioId: string): Promise<void>;
   // respuestas
-  votar(usuarioId: string, preguntaId: string, eleccion: Eleccion): Promise<void>;
+  votar(usuarioId: string, preguntaId: string, eleccion: Eleccion, sesionId: string): Promise<void>;
   listarRespuestas(sesionId: string): Promise<Respuesta[]>;
   listarRespuestasDePregunta(preguntaId: string): Promise<Respuesta[]>;
   borrarRespuestasDeSesion(sesionId: string): Promise<void>;

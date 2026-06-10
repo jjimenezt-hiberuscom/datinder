@@ -143,7 +143,7 @@ export class MockDatasource implements Datasource {
   }
 
   // ── respuestas ────────────────────────────────────────────────────────────
-  async votar(usuarioId: string, preguntaId: string, eleccion: Eleccion): Promise<void> {
+  async votar(usuarioId: string, preguntaId: string, eleccion: Eleccion, sesionId: string): Promise<void> {
     const existing = respuestas.find(r => r.usuario_id === usuarioId && r.pregunta_id === preguntaId);
     if (existing) return; // unique constraint
     const u = usuarios.find(u => u.id === usuarioId);
@@ -151,6 +151,7 @@ export class MockDatasource implements Datasource {
       id: generarId(),
       usuario_id: usuarioId,
       pregunta_id: preguntaId,
+      sesion_id: sesionId,
       eleccion,
       created_at: new Date().toISOString(),
     });

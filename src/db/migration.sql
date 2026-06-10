@@ -50,6 +50,7 @@ create table if not exists respuestas (
   id uuid primary key default gen_random_uuid(),
   usuario_id uuid references usuarios(id) on delete cascade,
   pregunta_id uuid references preguntas(id) on delete cascade,
+  sesion_id uuid references sesiones(id) on delete cascade,
   eleccion text not null,
   -- 'A' | 'B'
   created_at timestamptz default now(),

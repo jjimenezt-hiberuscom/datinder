@@ -102,8 +102,8 @@ export class SupabaseDatasource implements Datasource {
     await getSupabase().from('usuarios').update({ expulsado: true }).eq('id', usuarioId);
   }
 
-  async votar(usuarioId: string, preguntaId: string, eleccion: Eleccion): Promise<void> {
-    await getSupabase().from('respuestas').upsert({ usuario_id: usuarioId, pregunta_id: preguntaId, eleccion }, { onConflict: 'usuario_id,pregunta_id' });
+  async votar(usuarioId: string, preguntaId: string, eleccion: Eleccion, sesionId: string): Promise<void> {
+    await getSupabase().from('respuestas').upsert({ usuario_id: usuarioId, pregunta_id: preguntaId, sesion_id: sesionId, eleccion }, { onConflict: 'usuario_id,pregunta_id' });
   }
 
   async listarRespuestas(sesionId: string): Promise<Respuesta[]> {
@@ -131,7 +131,7 @@ export class SupabaseDatasource implements Datasource {
     const channel = sb
       .channel(`sesion-${sesionId}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'sesiones', filter: `id=eq.${sesionId}` }, onChange)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'respuestas' }, onChange)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'respuestas', filter: `sesion_id=eq.${sesionId}` }, onChange)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'usuarios', filter: `sesion_id=eq.${sesionId}` }, onChange)
       .subscribe();
     return () => { void sb.removeChannel(channel); };

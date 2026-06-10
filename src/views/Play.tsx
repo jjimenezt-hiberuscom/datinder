@@ -29,10 +29,10 @@ export function Play() {
     : false;
 
   async function votar(eleccion: 'A' | 'B') {
-    if (!usuario || !preguntaActual || yaVoto || votando) return;
+    if (!usuario || !sesion || !preguntaActual || yaVoto || votando) return;
     setVotando(true);
     setElegida(eleccion);
-    await db.votar(usuario.id, preguntaActual.id, eleccion);
+    await db.votar(usuario.id, preguntaActual.id, eleccion, sesion.id);
     setVotando(false);
   }
 

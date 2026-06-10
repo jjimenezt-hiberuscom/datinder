@@ -47,6 +47,7 @@ export interface Respuesta {
   id: string;
   usuario_id: string;
   pregunta_id: string;
+  sesion_id: string;
   eleccion: Eleccion;
   created_at: string;
 }
